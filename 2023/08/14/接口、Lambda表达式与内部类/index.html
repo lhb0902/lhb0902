@@ -1,0 +1,355 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>接口、Lambda表达式与内部类 | Badkruka's blogs</title><meta name="author" content="Badkruka"><meta name="copyright" content="Badkruka"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1.接口1.1接口的概念在Java程序设计语言中，接口不是类，而是希望对符合这个接口的类的一组需求。 接口中的所有方法都自动是public方法，在接口中声明方法时，可以省略public关键字，且实现接口时必须将所有方法声明为public。 接口绝不会有实例字段。 在Java8之前，接口绝不会实现方法，但现在已经可以在接口中提供简单方法了。 要讲类声明为实现某个接口，需要使用关键字implement">
+<meta property="og:type" content="article">
+<meta property="og:title" content="接口、Lambda表达式与内部类">
+<meta property="og:url" content="https://lhb0902.github.io/lhb0902/2023/08/14/%E6%8E%A5%E5%8F%A3%E3%80%81Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB/index.html">
+<meta property="og:site_name" content="Badkruka&#39;s blogs">
+<meta property="og:description" content="1.接口1.1接口的概念在Java程序设计语言中，接口不是类，而是希望对符合这个接口的类的一组需求。 接口中的所有方法都自动是public方法，在接口中声明方法时，可以省略public关键字，且实现接口时必须将所有方法声明为public。 接口绝不会有实例字段。 在Java8之前，接口绝不会实现方法，但现在已经可以在接口中提供简单方法了。 要讲类声明为实现某个接口，需要使用关键字implement">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png">
+<meta property="article:published_time" content="2023-08-14T01:38:23.000Z">
+<meta property="article:modified_time" content="2023-08-17T03:17:42.570Z">
+<meta property="article:author" content="Badkruka">
+<meta property="article:tag" content="接口">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png"><link rel="shortcut icon" href="/lhb0902/img/favicon.png"><link rel="canonical" href="https://lhb0902.github.io/lhb0902/2023/08/14/%E6%8E%A5%E5%8F%A3%E3%80%81Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><link rel="stylesheet" href="/lhb0902/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/lhb0902/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '接口、Lambda表达式与内部类',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-17 11:17:42'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/lhb0902/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a><a href="/lhb0902/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a><a href="/lhb0902/categories/"><div class="headline">Categories</div><div class="length-num">5</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/lhb0902/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png')"><nav id="nav"><span id="blog-info"><a href="/lhb0902/" title="Badkruka's blogs"><span class="site-name">Badkruka's blogs</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/lhb0902/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">接口、Lambda表达式与内部类</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-08-14T01:38:23.000Z" title="Created 2023-08-14 09:38:23">2023-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-08-17T03:17:42.570Z" title="Updated 2023-08-17 11:17:42">2023-08-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/lhb0902/categories/Java/">Java</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="接口、Lambda表达式与内部类"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-接口"><a href="#1-接口" class="headerlink" title="1.接口"></a>1.接口</h1><h2 id="1-1接口的概念"><a href="#1-1接口的概念" class="headerlink" title="1.1接口的概念"></a>1.1接口的概念</h2><p>在Java程序设计语言中，接口不是类，而是希望对符合这个接口的类的一组<strong>需求</strong>。</p>
+<p>接口中的所有方法都<strong>自动是public方法</strong>，在接口中声明方法时，可以省略public关键字，且实现接口时必须<strong>将所有方法声明为public</strong>。</p>
+<p>接口<strong>绝不会有实例字段</strong>。</p>
+<p>在Java8之前，接口<strong>绝不会实现方法</strong>，但现在已经可以在接口中提供简单方法了。</p>
+<p>要讲类声明为实现某个接口，需要使用关键字implements：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308140951188.png" alt="image-20230814094932102"></p>
+<p>实现接口的类必须<strong>对接口中的所有方法提供定义</strong>。</p>
+<h2 id="1-2接口的属性"><a href="#1-2接口的属性" class="headerlink" title="1.2接口的属性"></a>1.2接口的属性</h2><p>不能通过new关键字实例化一个接口，但可以声明接口的变量，用于引用实现了接口的类对象：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308141003518.png" alt="image-20230814100308510"></p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308141003348.png" alt="image-20230814100320289"></p>
+<p>与对象类似的，可以使用instanceof检查一个对象是否实现了某个特定的接口：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308141023824.png" alt="image-20230814102322848"></p>
+<p>与继承链类似，可以扩展接口，且允许有多条接口链，从通用性较高的的接口扩展到专用性较高的接口。</p>
+<p>虽然接口中不能包含实例字段，但<strong>可以包含常量</strong>(甚至没有方法，只有常量)：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308141025562.png" alt="image-20230814102558443"></p>
+<p>与接口中的方法都是自动被设置为public一样，接口中的字段总是public static final。</p>
+<p>一个类只能有一个父类，但是可以同时实现多个接口：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308141027665.png" alt="image-20230814102754399"></p>
+<h2 id="1-3接口与抽象类"><a href="#1-3接口与抽象类" class="headerlink" title="1.3接口与抽象类"></a>1.3接口与抽象类</h2><p>已经有了抽象类，为什么还需要接口？</p>
+<p>因为在Java中一个类<strong>只能有一个父类</strong>，但可以<strong>同时实现很多个接口</strong>。</p>
+<h2 id="1-4静态和私有方法"><a href="#1-4静态和私有方法" class="headerlink" title="1.4静态和私有方法"></a>1.4静态和私有方法</h2><p>在Java 8中，允许在接口中增加静态方法。通常的做法都是将静态方法放在<strong>伴随类</strong>中。在标准库中，会看到成对出现的接口和实用工具类，如Collection&#x2F;Collections或Path&#x2F;Paths。接口名后加s的往往内部为静态方法。</p>
+<p>但在Java 11中，Path等接口通过在其内部定义静态方法代替了伴随类：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151106263.png" alt="image-20230815110014934"></p>
+<p>在Java 9中，接口中的方法可以是私有方法，私有方法可以是静态方法或实例方法，只能被接口内部所调用。</p>
+<h2 id="1-5默认方法"><a href="#1-5默认方法" class="headerlink" title="1.5默认方法"></a>1.5默认方法</h2><p>可以为接口方法提供一个<strong>默认实现</strong>，必须用<strong>default修饰符</strong>标记：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151106001.png" alt="image-20230815110454541"></p>
+<p>默认方法的一个重要作用是支持<strong>接口演化</strong>。如果一个接口作为Java的一部分已经很多年了，假设很久以前你提供了这样一个类：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151111538.png" alt="image-20230815111147553"></p>
+<p>后来，在Java 8中，又为该接口增加了一个stream方法。如果stream方法不是一个默认方法，仅支持原先Collection的类将不能编译，由于stream方法没有具体的实现。而如果stream方法是一个默认方法，则保证了<strong>源代码兼容</strong>。</p>
+<h2 id="1-6解决默认方法冲突"><a href="#1-6解决默认方法冲突" class="headerlink" title="1.6解决默认方法冲突"></a>1.6解决默认方法冲突</h2><p>如果先在一个接口中将一个方法定义为默认方法，然后又在超类或另一个接口中定义同名的方法，如何解决冲突？</p>
+<p>1.<strong>超类优先</strong>：如果超类提供了一个具体方法，同名且觉有相同参数类型的默认方法将被忽略。</p>
+<p>2.<strong>接口冲突</strong>：如果一个接口提供了一个默认方法，另一个接口提供了同名同参数的方法(<strong>无论是不是默认方法</strong>)，则必须覆盖该方法来解决冲突。如果两个接口存在同名的非默认接口，则不存在冲突。</p>
+<p>当一个类同时继承了一个父类和实现了一个接口时，如果父类和接口有同名同参数的方法，该类只会考虑超类方法，接口的所有默认方法都会被忽略，这就是<strong>类优先</strong>规则。</p>
+<h2 id="1-7接口与回调"><a href="#1-7接口与回调" class="headerlink" title="1.7接口与回调"></a>1.7接口与回调</h2><p>回调(callback)是一种常见的<strong>程序设计模式</strong>，在该模式中，可以指定某个特定事件发生时应该采取的动作。</p>
+<p>例如，假设希望每隔一秒钟就打印一条信息“At the tone, the time is…”，然后响一声，则可以定义实现一个ActionListener接口的类，并构造这个类的一个对象，传递给Timer构造器。Timer对象会每隔一段时间，执行上述对象中的方法。上述过程便利用了回调。</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151411592.png" alt="image-20230815141141396"></p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151411511.png" alt="image-20230815141156472"></p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151436180.png" alt="image-20230815143606798"></p>
+<h2 id="1-8Comparator接口"><a href="#1-8Comparator接口" class="headerlink" title="1.8Comparator接口"></a>1.8Comparator接口</h2><p>如果想以自定义的规则对于字符串数组排序，而不是按字典顺序进行排序，肯定无法让String类用两种不同的方式实现compareTo方法，String类不能由我们修改。此时Array.sort()方法还有第二个版本，由一个待比较数组和一个比较器作为参数，比较器是实现了Comparator接口的类的实例。</p>
+<p>Comparator接口代码如下：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151443908.png" alt="image-20230815144325984"></p>
+<p>需要由一个类实现上述接口：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151443839.png" alt="image-20230815144352986"></p>
+<p>具体完成比较时，需要建立一个实例:</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151445059.png" alt="image-20230815144528130"></p>
+<h2 id="1-9对象克隆"><a href="#1-9对象克隆" class="headerlink" title="1.9对象克隆"></a>1.9对象克隆</h2><p>为一个包含对象引用的变量建立副本，意味着<strong>浅拷贝</strong>(两个引用指向同样的位置)：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151448430.png" alt="image-20230815144833442"></p>
+<p>如果想进行<strong>深拷贝</strong>，就需要使用<strong>clone方法</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151449077.png" alt="image-20230815144939035"></p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151455231.png" alt="image-20230815145537232"></p>
+<p><centor><strong>拷贝-&gt;浅拷贝   克隆-&gt;深拷贝</strong></centor></p>
+<p>但clone是Object的一个protected方法，只有Employee类可以克隆Employee对象。这个限制是有原因的，Object类对于具体进行拷贝的类一无所知，如果类中包含<strong>基本数据类型</strong>的字段，可以成功进行<strong>深拷贝</strong>，但如果类中包含子对象的<strong>引用</strong>，对这些引用的拷贝是<strong>浅拷贝</strong>，即原对象和克隆对象仍然会共享一些信息。</p>
+<p>为了解决上述问题，需要<strong>实现Cloneable接口</strong>，重新<strong>定义clone方法</strong>，并指定public访问修饰符。</p>
+<p>Cloneable接口是Java提供的少数<strong>标记接口</strong>之一，标记接口不包含任何方法，它唯一的作用就是允许在类型查询中使用instanceof。</p>
+<p>即使clone的默认实现(浅拷贝)能够满足要求，还是要实现Cloneable接口，将clone重新定义为public，再调用super.clone()：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151516478.png" alt="image-20230815151643511"></p>
+<p>而上述clone仅仅是将Object.clone提供的浅拷贝变为了public方法，但并未增加任何功能。</p>
+<p>下面的例子给出了创建深拷贝的clone方法:</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151525144.png" alt="image-20230815152552232"></p>
+<p>注：Data类实现了Cloneable接口(深拷贝)。</p>
+<p>如果在一个对象上调用clone，但这个对象的类并没有实现Cloneable接口，Object类的clone方法就会抛出一个CloneNotSupportedException。</p>
+<p>由于类中实现的clone方法需要定义为public，必须小心子类对于其clone方法的调用，可能会出现浅拷贝问题。</p>
+<p>所有数组类型都有一个公共的clone方法，而不是受保护的，可以用该方法建立新数组：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151540248.png" alt="image-20230815154014399"></p>
+<h1 id="2-lambda表达式"><a href="#2-lambda表达式" class="headerlink" title="2.lambda表达式"></a>2.lambda表达式</h1><p><strong>lambda表达式</strong>是一个<strong>可传递的代码块</strong>，可以在以后执行一次或多次。</p>
+<h2 id="2-1为什么引入lambda表达式"><a href="#2-1为什么引入lambda表达式" class="headerlink" title="2.1为什么引入lambda表达式"></a>2.1为什么引入lambda表达式</h2><p>如1.8节中所述，Java中不能直接传递代码块，你必须构造一个对象，将所需传递的方法包含其中。</p>
+<p>而lambda表达式的出现就是为了弥补Java在上述方面的缺陷。</p>
+<h2 id="2-2lambda表达式的语法"><a href="#2-2lambda表达式的语法" class="headerlink" title="2.2lambda表达式的语法"></a>2.2lambda表达式的语法</h2><p>例如要将first.length()-second.length()改写为lambda表达式：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151558148.png" alt="image-20230815155811877"></p>
+<p>以上代码的第一行指明了相应的数据类型。lambda表达式就一个代码块，包含了传入代码的变量规范。</p>
+<p>如果代码要完成的计算无法放在一个表达式中，则使用{}：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151600329.png" alt="image-20230815160039104"></p>
+<p>即使lambda表达式没有参数，仍然要提供空括号，类似无参方法：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151601187.png" alt="image-20230815160131843"></p>
+<p>如果可以推导出一个lambda表达式的参数类型，则可以省略其类型：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151609707.png" alt="image-20230815160922742"></p>
+<p>如果方法只有一个参数，且参数类型可以推导得出，甚至可以省略小括号：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151610181.png" alt="image-20230815161015182"></p>
+<p>无需指定lambda表达式的返回类型，lambda表达式的返回类型总会由上下文推导得出。</p>
+<h2 id="2-3函数式接口"><a href="#2-3函数式接口" class="headerlink" title="2.3函数式接口"></a>2.3函数式接口</h2><p>对于<strong>只有一个抽象方法的接口</strong>，需要这种接口的对象时，可以提供一个<strong>lambda表达式</strong>，这种接口称为<strong>函数式接口</strong>(functional interface)。</p>
+<p>例如Arrays.sort()方法，它的第二个参数需要一个Comparator实例，Comparator就是只有一个方法的接口，所以可以提供一个lambda表达式：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151618159.png" alt="image-20230815161858195"></p>
+<p>在底层，Arrays.sort()方法会接收实现了Comparator&lt; String &gt;的某个类的对象。在这个对象上调用compare方法，则会自动执行这个lambda表达式的体。这比传统的内联类更为高效。</p>
+<p>下面给出了1.7节中代码的lambda表达式版本：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151621002.png" alt="image-20230815162121462"></p>
+<p>Java API在java.util.function包中定义了很多通用的函数式接口，其中一个接口BiFunction&lt;T,U,R&gt;描述了参数类型为T和U而且返回类型为R的函数。可以将字符串比较lambda表达式保存在这个类型的变量中：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151628527.png" alt="image-20230815162843639"></p>
+<h2 id="2-4方法引用"><a href="#2-4方法引用" class="headerlink" title="2.4方法引用"></a>2.4方法引用</h2><p>有时，lambda表达式涉及一个方法。例如1.7节中的代码可以用lambda表达式改写为以下形式：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151636410.png" alt="image-20230815163632167"></p>
+<p>如果直接把println方法传递到Timer构造器就更好了：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151637879.png" alt="image-20230815163730961"></p>
+<p>而表达式System.out::println是一个<strong>方法引用(method reference)</strong>,它指示编译器生成一个函数式接口的实例，覆盖这个接口的抽象方法来调用给定方法。在上例子中，会生成一个ActionListener，它的actionPerformed(ActionEvent e)方法要调用System.out.println(e)。</p>
+<p>类似于lambda表达式，<strong>方法引用也不是一个对象</strong>，但为一个类型为函数式接口的变量赋值是会<strong>生成一个对象</strong>。</p>
+<p>依据不同的方法，方法引用会转换为有不同参数形式的(隐式参数或显式参数)lambda表达式：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151647641.png" alt="image-20230815164710192"></p>
+<p>可以在方法引用中使用<strong>this参数或super参数</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151649185.png" alt="image-20230815164950845"></p>
+<h2 id="2-5构造器引用"><a href="#2-5构造器引用" class="headerlink" title="2.5构造器引用"></a>2.5构造器引用</h2><p>构造引用与方法引用类似，只不过方法名为new：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151654914.png" alt="image-20230815165359876"></p>
+<h2 id="2-6变量作用域"><a href="#2-6变量作用域" class="headerlink" title="2.6变量作用域"></a>2.6变量作用域</h2><p>程序可能希望能够在lambda表达式中访问外围方法或类中的变量：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151657511.png" alt="image-20230815165715538"></p>
+<p>lambda表达式试图访问外部的变量test，但lambda表达式的代码可能在repeatMessage()调用返回后很久才进行，有可能那时这个参数变量已经不存在了，怎么办？</p>
+<p>实际上，test变量被lambda表达式<strong>捕获</strong>(captured)，代码块以及自由变量值构成了<strong>闭包</strong>。在Java中，要确保所捕获的值被明确定义，且其值不能改变。lambda表达式中捕获的变量必须是<strong>事实最终变量</strong>。事实最终变量是指，变量初始化之后就<strong>不会再为它赋新值</strong>。text作为String对象，其值不会改变，故捕获test是合法的。</p>
+<p>lambda表达式的体<strong>与嵌套块有相同的作用域</strong>，一样遵循命名冲突与遮蔽规则。</p>
+<p>如果<strong>lambda表达式中使用this关键字</strong>，是指<strong>创建lambda表达式的方法的this参数</strong>。</p>
+<h2 id="2-7处理lambda表达式"><a href="#2-7处理lambda表达式" class="headerlink" title="2.7处理lambda表达式"></a>2.7处理lambda表达式</h2><p>lambda表达式的重点是<strong>延迟执行</strong>，如果需要立即执行代码，就无须写成lambda表达式。</p>
+<p>使用lambda表达式的常见情况如下：</p>
+<p>1.在一个<strong>单独线程</strong>中运行代码</p>
+<p>2.在算法的<strong>适当位置</strong>运行代码</p>
+<p>3.发生<strong>某种情况</strong>时执行代码</p>
+<p>4.只在<strong>必要时</strong>才运行代码</p>
+<p>例如，想要重复一个动作n次：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151725557.png" alt="image-20230815172512129"></p>
+<p>要接受上述lambda表达式，需要选择一个函数式接口：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151725360.png" alt="image-20230815172555371"></p>
+<p>下表给出了常用的函数式接口：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151726596.png" alt="image-20230815172620567"></p>
+<p>下表给出了常用基本类型的函数式接口：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308151756923.png" alt="image-20230815175621969"></p>
+<h2 id="2-8再谈Comparator"><a href="#2-8再谈Comparator" class="headerlink" title="2.8再谈Comparator"></a>2.8再谈Comparator</h2><p>Comparator接口包含很多<strong>方便的静态方法</strong>来创建比较器，这些方法可以用于lambda表达式或方法引用。静态comparing方法取一个“<strong>键提取器</strong>”函数，将类型T映射为一个可比较的类型(如String)。依据上述类型的值来完成对象之间的比较。假设有一个Person数组，可以按名字进行排序：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161023114.png" alt="image-20230816101651108"></p>
+<p>可以将比较器与thenComparing方法串起来，处理比较结果相同的情况：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161023506.png" alt="image-20230816101906290"></p>
+<h1 id="3-内部类"><a href="#3-内部类" class="headerlink" title="3.内部类"></a>3.内部类</h1><p><strong>内部类</strong>是定义在另一个类中的类，其主要有两个优点：</p>
+<p>1.内部类可以<strong>对同一个包中的其他类隐藏</strong></p>
+<p>2.内部类<strong>可以访问定义这个类的作用域中的数据</strong>，包括原本私有的数据</p>
+<h2 id="3-1使用内部类访问对象状态"><a href="#3-1使用内部类访问对象状态" class="headerlink" title="3.1使用内部类访问对象状态"></a>3.1使用内部类访问对象状态</h2><p>下例构造一个语音时钟，并为其提供两个参数：发出通知的间隔和开关铃声的标志：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161041167.png" alt="image-20230816104135098"></p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161041886.png" alt="image-20230816104143880"></p>
+<p>下面给出TimePrinter类的详细内容：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161042661.png" alt="image-20230816104245746"></p>
+<p>注意，TimePrinter类访问了<strong>外部的beep变量</strong>。即内部类方法<strong>能访问自身的数据字段</strong>，<strong>也能访问创建它的外围类对象的数据字段</strong>。为了实现上述特性，内部类的对象总有一个隐式的引用，指向创建它的外部类对象：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161045453.png" alt="image-20230816104514271"></p>
+<p>将外围类对象的引用称为outer，actionPerformed方法将等价于：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161050296.png" alt="image-20230816105014189"></p>
+<h2 id="3-2内部类的特殊语法规则"><a href="#3-2内部类的特殊语法规则" class="headerlink" title="3.2内部类的特殊语法规则"></a>3.2内部类的特殊语法规则</h2><p>上节中外围类引用的”outer”<strong>并非Java关键字</strong>，只是为了说明问题而引入的，实际的正规语法更加复杂：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161053743.png" alt="image-20230816105312455"></p>
+<p>actionPerformed方法可以以如下方式编写：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161054299.png" alt="image-20230816105359299"></p>
+<p>相反的，可以用如下语法更明确地编写内部类构造器：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161055039.png" alt="image-20230816105540034"></p>
+<p>例如：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161056405.png" alt="image-20230816105602093"></p>
+<h2 id="3-3内部类是否有用、必要和安全"><a href="#3-3内部类是否有用、必要和安全" class="headerlink" title="3.3内部类是否有用、必要和安全"></a>3.3内部类是否有用、必要和安全</h2><p>内部类是一个<strong>编译器现象</strong>，与虚拟机无关，编译器会将内部类转换为常规的类文件，用$符号分隔外部类名和内部类名，虚拟机则对此一无所知。</p>
+<h2 id="3-4局部内部类"><a href="#3-4局部内部类" class="headerlink" title="3.4局部内部类"></a>3.4局部内部类</h2><p>当内部类仅被某个类中的特定方法调用一次时(上例中实际上只有start()调用了内部类)，可以<strong>在一个方法中局部地定义内部类</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161106994.png" alt="image-20230816110656859"></p>
+<p><strong>声明局部内部类不能有访问说明符</strong>，局部内部类的作用域仅在声明该局部内部类的块中。</p>
+<h2 id="3-5由外部方法访问变量"><a href="#3-5由外部方法访问变量" class="headerlink" title="3.5由外部方法访问变量"></a>3.5由外部方法访问变量</h2><p>与一般内部类相比，<strong>局部内部类</strong>除了能访问外部类字段外<strong>还能访问局部变量</strong>，但这些局部变量必须是<strong>事实最终变量</strong>(一旦幅值就绝不会改变)。</p>
+<h2 id="3-6匿名内部类"><a href="#3-6匿名内部类" class="headerlink" title="3.6匿名内部类"></a>3.6匿名内部类</h2><p>使用局部内部类时，如果只想创建该类的一个对象，甚至不需要为类指定名字，可以构建一个<strong>匿名内部类</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161358476.png" alt="image-20230816135817444"></p>
+<p>上述代码的含义为，创建一个类的新对象，该类实现了ActionListener接口，需要实现的方法在actionPerformed在括号{}内定义。更一般的语法如下：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161400772.png" alt="image-20230816140046853"></p>
+<p>superType<strong>可以是接口</strong>，内部类就必须实现这个接口，superType也<strong>可以是类</strong>，内部类必须扩展这个类。由于匿名内部类没有名字，故也不能有构造器。</p>
+<p>多年来，Java程序员习惯使用匿名内部类实现事件监听器和其他回调，如今最好还是使用lambda表达式。</p>
+<h2 id="3-7静态内部类"><a href="#3-7静态内部类" class="headerlink" title="3.7静态内部类"></a>3.7静态内部类</h2><p>有时，使用内部类只是为了把一个类隐藏在另一个内部，<strong>不需要内部类有外围类对象的一个引用，应该将内部类声明为static</strong>，这样就不会生成那个引用。</p>
+<h1 id="4-服务加载器"><a href="#4-服务加载器" class="headerlink" title="4.服务加载器"></a>4.服务加载器</h1><p>有时会开发采用一个服务架构的应用，在提供一个服务时，程序希望服务设计者能有一些自由，能够确定如何实现服务的特性。利用ServiceLoader类可以很容易地加载符合一个公共接口的服务。假如你的服务要提供加解密：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161427987.png" alt="image-20230816142710010"></p>
+<p>服务的提供者就可以提供一个或多个实现这个服务的类，例如：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161427892.png" alt="image-20230816142757019"></p>
+<p>实现类可以放在任意的包中，不一定是服务接口所在的包，每个实现类必须有一个无参构造器。</p>
+<p>需要将这些类的类名增加到META-INF&#x2F;services目录下的一个UTF-8编码的文本文件中，文件名必须和完全限定类名一致。在上述例子中，文件META-INF&#x2F;services&#x2F;serviceLoader.Cipher必须包含如下行：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161433820.png" alt="image-20230816143334883"></p>
+<p>在完成准备工作后，程序可以初始化一个服务加载器：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161434242.png" alt="image-20230816143407330"></p>
+<p>服务加载器的iterator方法会返回一个迭代器来处理服务的所有实现，最容易的做法是用for循环进行遍历：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161442914.png" alt="image-20230816143751444"></p>
+<h1 id="5-代理"><a href="#5-代理" class="headerlink" title="5.代理"></a>5.代理</h1><p>利用<strong>代理</strong>(proxy)可以在运行时创建实现了一组给定接口的新类，只有<strong>在编译时期无法确定需要实现哪个接口时</strong>才有必要使用代理。</p>
+<h2 id="5-1何时使用代理"><a href="#5-1何时使用代理" class="headerlink" title="5.1何时使用代理"></a>5.1何时使用代理</h2><p>代理类应当包含以下内容：</p>
+<p>1.指定接口所需要的全部方法</p>
+<p>2.Object类中的全部方法，例如toString()、equals()</p>
+<p>不能在运行时为这些方法定义新代码。实际上，必须提供一个<strong>调用处理器</strong>，调用处理器是实现了InvocationHandler接口的类的对象，这个接口只有一个方法：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161452195.png" alt="image-20230816145213067"></p>
+<p>无论何时调用代理对象的方法，<strong>调用处理器的invoke方法都会被调用</strong>，并向其传递Method对象和原调用参数。之后调用处理器必须确定如何处理这个调用。</p>
+<h2 id="5-2创建代理对象"><a href="#5-2创建代理对象" class="headerlink" title="5.2创建代理对象"></a>5.2创建代理对象</h2><p>要创建一个代理对象，要使用Proxy类的newProxyInstance方法，该方法有三个参数：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161459948.png" alt="image-20230816145902926"></p>
+<p>此时还存在两个问题。如何定义处理器？对得到的代理对象能做什么？</p>
+<p>上述问题的答案要取决于想要使用代理机制解决什么问题，例如：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161500379.png" alt="image-20230816150036208"></p>
+<p>为了<strong>使用代理和调用处理器跟踪方法调用</strong>，定义一个TraceHandler包装器类存储包装的对象，其中invoke方法会打印所调用方法的名字和参数。</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161530586.png" alt="image-20230816153023650"></p>
+<p>下面说明如何构造可以追踪方法调用的代理对象：</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308161530827.png" alt="image-20230816153049233"></p>
+<p>现在，只要在proxy上调用了某个接口的方法，就会打印这个方法的名字和参数，之后再用value调用这个方法。</p>
+<h2 id="5-3代理类的特性"><a href="#5-3代理类的特性" class="headerlink" title="5.3代理类的特性"></a>5.3代理类的特性</h2><p>1.代理类是在程序运行过程中<strong>动态创建</strong>的，一旦被创建，他们就变成了常规类，与虚拟机中的任何其他类没什么区别。</p>
+<p>2.所有代理类都<strong>扩展Proxy类</strong>。一个代理类只有一个实例字段，即调用处理器，完成代理对象任务所需的任何额外数据都在调用处理器中。</p>
+<p>3.所有代理类都要<strong>覆盖Object类的toString、equals和hashCode方法</strong>。</p>
+<p>3.没有定义代理类名，虚拟机中的Proxy类将会生成一个以字符串$Proxy开头的类名。</p>
+<p>4.对于一个<strong>特定的类加载器和预设的一组接口</strong>来说，<strong>只能有一个代理类</strong>。</p>
+<p>5.代理类总是<strong>public和final</strong>。</p>
+<p>6.可以调用isProxyClass方法检测某个Class对象是否表示一个代理类。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://lhb0902.github.io/lhb0902">Badkruka</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://lhb0902.github.io/lhb0902/2023/08/14/%E6%8E%A5%E5%8F%A3%E3%80%81Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB/">https://lhb0902.github.io/lhb0902/2023/08/14/%E6%8E%A5%E5%8F%A3%E3%80%81Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/lhb0902/tags/%E6%8E%A5%E5%8F%A3/">接口</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/lhb0902/2023/08/17/%E5%BC%82%E5%B8%B8%E3%80%81%E6%96%AD%E8%A8%80%E5%92%8C%E6%97%A5%E5%BF%97/" title="异常、断言和日志"><img class="cover" src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png" onerror="onerror=null;src='/lhb0902/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">异常、断言和日志</div></div></a></div><div class="next-post pull-right"><a href="/lhb0902/2023/08/13/%E7%83%AD%E9%83%A8%E7%BD%B2(%E7%95%AA%E5%A4%96%E7%AF%87)/" title="热部署(番外篇)"><img class="cover" src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171045477.png" onerror="onerror=null;src='/lhb0902/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">热部署(番外篇)</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/lhb0902/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Badkruka</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/lhb0902/archives/"><div class="headline">Articles</div><div class="length-num">10</div></a><a href="/lhb0902/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a><a href="/lhb0902/categories/"><div class="headline">Categories</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lhb0902" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="QQ-Email:2507962100@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.</span> <span class="toc-text">1.接口</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1%E6%8E%A5%E5%8F%A3%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">1.1.</span> <span class="toc-text">1.1接口的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">1.2接口的属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3%E6%8E%A5%E5%8F%A3%E4%B8%8E%E6%8A%BD%E8%B1%A1%E7%B1%BB"><span class="toc-number">1.3.</span> <span class="toc-text">1.3接口与抽象类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4%E9%9D%99%E6%80%81%E5%92%8C%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.</span> <span class="toc-text">1.4静态和私有方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95"><span class="toc-number">1.5.</span> <span class="toc-text">1.5默认方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6%E8%A7%A3%E5%86%B3%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E5%86%B2%E7%AA%81"><span class="toc-number">1.6.</span> <span class="toc-text">1.6解决默认方法冲突</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-7%E6%8E%A5%E5%8F%A3%E4%B8%8E%E5%9B%9E%E8%B0%83"><span class="toc-number">1.7.</span> <span class="toc-text">1.7接口与回调</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-8Comparator%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.8.</span> <span class="toc-text">1.8Comparator接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-9%E5%AF%B9%E8%B1%A1%E5%85%8B%E9%9A%86"><span class="toc-number">1.9.</span> <span class="toc-text">1.9对象克隆</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">2.lambda表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BC%95%E5%85%A5lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">2.1.</span> <span class="toc-text">2.1为什么引入lambda表达式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E8%AF%AD%E6%B3%95"><span class="toc-number">2.2.</span> <span class="toc-text">2.2lambda表达式的语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3"><span class="toc-number">2.3.</span> <span class="toc-text">2.3函数式接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="toc-number">2.4.</span> <span class="toc-text">2.4方法引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5%E6%9E%84%E9%80%A0%E5%99%A8%E5%BC%95%E7%94%A8"><span class="toc-number">2.5.</span> <span class="toc-text">2.5构造器引用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6%E5%8F%98%E9%87%8F%E4%BD%9C%E7%94%A8%E5%9F%9F"><span class="toc-number">2.6.</span> <span class="toc-text">2.6变量作用域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7%E5%A4%84%E7%90%86lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">2.7.</span> <span class="toc-text">2.7处理lambda表达式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8%E5%86%8D%E8%B0%88Comparator"><span class="toc-number">2.8.</span> <span class="toc-text">2.8再谈Comparator</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%86%85%E9%83%A8%E7%B1%BB"><span class="toc-number">3.</span> <span class="toc-text">3.内部类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1%E4%BD%BF%E7%94%A8%E5%86%85%E9%83%A8%E7%B1%BB%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1%E7%8A%B6%E6%80%81"><span class="toc-number">3.1.</span> <span class="toc-text">3.1使用内部类访问对象状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2%E5%86%85%E9%83%A8%E7%B1%BB%E7%9A%84%E7%89%B9%E6%AE%8A%E8%AF%AD%E6%B3%95%E8%A7%84%E5%88%99"><span class="toc-number">3.2.</span> <span class="toc-text">3.2内部类的特殊语法规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3%E5%86%85%E9%83%A8%E7%B1%BB%E6%98%AF%E5%90%A6%E6%9C%89%E7%94%A8%E3%80%81%E5%BF%85%E8%A6%81%E5%92%8C%E5%AE%89%E5%85%A8"><span class="toc-number">3.3.</span> <span class="toc-text">3.3内部类是否有用、必要和安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-4%E5%B1%80%E9%83%A8%E5%86%85%E9%83%A8%E7%B1%BB"><span class="toc-number">3.4.</span> <span class="toc-text">3.4局部内部类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-5%E7%94%B1%E5%A4%96%E9%83%A8%E6%96%B9%E6%B3%95%E8%AE%BF%E9%97%AE%E5%8F%98%E9%87%8F"><span class="toc-number">3.5.</span> <span class="toc-text">3.5由外部方法访问变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-6%E5%8C%BF%E5%90%8D%E5%86%85%E9%83%A8%E7%B1%BB"><span class="toc-number">3.6.</span> <span class="toc-text">3.6匿名内部类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-7%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB"><span class="toc-number">3.7.</span> <span class="toc-text">3.7静态内部类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%9C%8D%E5%8A%A1%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">4.服务加载器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E4%BB%A3%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">5.代理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86"><span class="toc-number">5.1.</span> <span class="toc-text">5.1何时使用代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2%E5%88%9B%E5%BB%BA%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="toc-number">5.2.</span> <span class="toc-text">5.2创建代理对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3%E4%BB%A3%E7%90%86%E7%B1%BB%E7%9A%84%E7%89%B9%E6%80%A7"><span class="toc-number">5.3.</span> <span class="toc-text">5.3代理类的特性</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2023/08/17/%E5%BC%82%E5%B8%B8%E3%80%81%E6%96%AD%E8%A8%80%E5%92%8C%E6%97%A5%E5%BF%97/" title="异常、断言和日志"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="异常、断言和日志"/></a><div class="content"><a class="title" href="/lhb0902/2023/08/17/%E5%BC%82%E5%B8%B8%E3%80%81%E6%96%AD%E8%A8%80%E5%92%8C%E6%97%A5%E5%BF%97/" title="异常、断言和日志">异常、断言和日志</a><time datetime="2023-08-17T05:53:11.000Z" title="Created 2023-08-17 13:53:11">2023-08-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2023/08/14/%E6%8E%A5%E5%8F%A3%E3%80%81Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB/" title="接口、Lambda表达式与内部类"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171021698.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="接口、Lambda表达式与内部类"/></a><div class="content"><a class="title" href="/lhb0902/2023/08/14/%E6%8E%A5%E5%8F%A3%E3%80%81Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%8E%E5%86%85%E9%83%A8%E7%B1%BB/" title="接口、Lambda表达式与内部类">接口、Lambda表达式与内部类</a><time datetime="2023-08-14T01:38:23.000Z" title="Created 2023-08-14 09:38:23">2023-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2023/08/13/%E7%83%AD%E9%83%A8%E7%BD%B2(%E7%95%AA%E5%A4%96%E7%AF%87)/" title="热部署(番外篇)"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171045477.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="热部署(番外篇)"/></a><div class="content"><a class="title" href="/lhb0902/2023/08/13/%E7%83%AD%E9%83%A8%E7%BD%B2(%E7%95%AA%E5%A4%96%E7%AF%87)/" title="热部署(番外篇)">热部署(番外篇)</a><time datetime="2023-08-13T10:02:28.000Z" title="Created 2023-08-13 18:02:28">2023-08-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2023/07/25/HTTP%E8%AF%B7%E6%B1%82%E4%B8%AD%E7%9A%84GET%E4%B8%8EPOST%E6%96%B9%E6%B3%95/" title="HTTP请求中的GET与POST方法"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171044575.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="HTTP请求中的GET与POST方法"/></a><div class="content"><a class="title" href="/lhb0902/2023/07/25/HTTP%E8%AF%B7%E6%B1%82%E4%B8%AD%E7%9A%84GET%E4%B8%8EPOST%E6%96%B9%E6%B3%95/" title="HTTP请求中的GET与POST方法">HTTP请求中的GET与POST方法</a><time datetime="2023-07-25T05:36:58.000Z" title="Created 2023-07-25 13:36:58">2023-07-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2023/07/24/%E7%BA%BF%E7%A8%8B%E3%80%81%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/" title="线程、进程与锁"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202308171045477.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="线程、进程与锁"/></a><div class="content"><a class="title" href="/lhb0902/2023/07/24/%E7%BA%BF%E7%A8%8B%E3%80%81%E8%BF%9B%E7%A8%8B%E4%B8%8E%E9%94%81/" title="线程、进程与锁">线程、进程与锁</a><time datetime="2023-07-24T07:18:29.000Z" title="Created 2023-07-24 15:18:29">2023-07-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 By Badkruka</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/lhb0902/js/utils.js"></script><script src="/lhb0902/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="trueS"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
