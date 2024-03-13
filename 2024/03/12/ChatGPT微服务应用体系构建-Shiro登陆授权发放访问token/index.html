@@ -1,0 +1,257 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token | Badkruka's blogs</title><meta name="author" content="Badkruka"><meta name="copyright" content="Badkruka"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 功能诉求以用户使用 OpenAI 接口，如；http:&#x2F;&#x2F;localhost&#x2F;api 时，需要根据用户身份标识做一些访问的验证和限定。最直接就是在使用 api 的时候把用户的账号和密码一同和访问 api 传递过来，如；http:&#x2F;&#x2F;localhost&#x2F;api?userId&#x3D;lhb&amp;password&#x3D;123 但这样就把用户的密码信息给泄漏了，是非常不安全的。 所以我们本章节需要根据用户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token">
+<meta property="og:url" content="https://lhb0902.github.io/lhb0902/2024/03/12/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-Shiro%E7%99%BB%E9%99%86%E6%8E%88%E6%9D%83%E5%8F%91%E6%94%BE%E8%AE%BF%E9%97%AEtoken/index.html">
+<meta property="og:site_name" content="Badkruka&#39;s blogs">
+<meta property="og:description" content="1. 功能诉求以用户使用 OpenAI 接口，如；http:&#x2F;&#x2F;localhost&#x2F;api 时，需要根据用户身份标识做一些访问的验证和限定。最直接就是在使用 api 的时候把用户的账号和密码一同和访问 api 传递过来，如；http:&#x2F;&#x2F;localhost&#x2F;api?userId&#x3D;lhb&amp;password&#x3D;123 但这样就把用户的密码信息给泄漏了，是非常不安全的。 所以我们本章节需要根据用户">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403101116107.jpeg">
+<meta property="article:published_time" content="2024-03-12T12:17:36.000Z">
+<meta property="article:modified_time" content="2024-03-12T14:46:05.997Z">
+<meta property="article:author" content="Badkruka">
+<meta property="article:tag" content="Shiro">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403101116107.jpeg"><link rel="shortcut icon" href="/lhb0902/img/favicon.png"><link rel="canonical" href="https://lhb0902.github.io/lhb0902/2024/03/12/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-Shiro%E7%99%BB%E9%99%86%E6%8E%88%E6%9D%83%E5%8F%91%E6%94%BE%E8%AE%BF%E9%97%AEtoken/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><link rel="stylesheet" href="/lhb0902/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/lhb0902/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-12 22:46:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/lhb0902/archives/"><div class="headline">Articles</div><div class="length-num">113</div></a><a href="/lhb0902/tags/"><div class="headline">Tags</div><div class="length-num">55</div></a><a href="/lhb0902/categories/"><div class="headline">Categories</div><div class="length-num">14</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/lhb0902/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403101116107.jpeg')"><nav id="nav"><span id="blog-info"><a href="/lhb0902/" title="Badkruka's blogs"><span class="site-name">Badkruka's blogs</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/lhb0902/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-03-12T12:17:36.000Z" title="Created 2024-03-12 20:17:36">2024-03-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-03-12T14:46:05.997Z" title="Updated 2024-03-12 22:46:05">2024-03-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/lhb0902/categories/Java%E9%A1%B9%E7%9B%AE-ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA/">Java项目-ChatGPT微服务应用体系构建</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-功能诉求"><a href="#1-功能诉求" class="headerlink" title="1. 功能诉求"></a>1. 功能诉求</h1><p>以用户使用 OpenAI 接口，如；<a target="_blank" rel="noopener" href="http://localhost/api">http://localhost/api</a> 时，需要根据用户身份标识做一些访问的验证和限定。最直接就是在使用 api 的时候把用户的账号和密码一同和访问 api 传递过来，如；<a target="_blank" rel="noopener" href="http://localhost/api?userId=lhb&password=123">http://localhost/api?userId=lhb&amp;password=123</a> 但这样就把用户的密码信息给泄漏了，是非常不安全的。</p>
+<p>所以我们本章节需要根据用户的账密，先通过登录验证的方式，发放一个 token，之后用户再使用这个 token 配置到链接后面使用。如；<a target="_blank" rel="noopener" href="http://localhost/api?token=xxxxx">http://localhost/api?token=xxxxx</a> 这样就安全多了。—— 一般 token 是配置到 http 请求头信息中，但这里为了更加方便用户传递参数，所以这样处理了。</p>
+<h1 id="2-流程设计"><a href="#2-流程设计" class="headerlink" title="2. 流程设计"></a>2. 流程设计</h1><p>整个流程为；以用户访问一个登录接口，服务端使用用户的账号和密码进行验证，验证通过后发放 Token，之后再使用 Token 访问 OpenAI 地址。</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122024945.png" alt="image-20240312202251539"></p>
+<h1 id="3-方案实现"><a href="#3-方案实现" class="headerlink" title="3. 方案实现"></a>3. 方案实现</h1><h2 id="1-工程结构"><a href="#1-工程结构" class="headerlink" title="1. 工程结构"></a>1. 工程结构</h2><p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122028052.png" alt="image-20240312202816265"></p>
+<p>绿色为本章新增代码；IApiAccessService、JwtToken、JwtRealm、JwtFilter、JwtUtil、ShiroConfig、Constants、ApiAccessController：</p>
+<ul>
+<li>JwtToken：Token 的对象信息，你可以设置用户ID、用户密码</li>
+<li>JwtRealm：一个自定义的验证服务，需要继承 AuthorizingRealm 类。</li>
+<li>JwtFilter：自定义的 Filter 过滤器。</li>
+<li>JwtUtil：token的创建、解析、验证工具类。</li>
+<li>ShiroConfig：Shiro 的一个配置启动类。</li>
+<li>ApiAccessController：新增加的API访问准入管理；当访问 OpenAI 接口时，需要进行准入验证。</li>
+</ul>
+<h2 id="2-JwtRealm-验证配置"><a href="#2-JwtRealm-验证配置" class="headerlink" title="2. JwtRealm 验证配置"></a>2. JwtRealm 验证配置</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> AuthenticationInfo <span class="title function_">doGetAuthenticationInfo</span><span class="params">(AuthenticationToken token)</span> <span class="keyword">throws</span> AuthenticationException &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">jwt</span> <span class="operator">=</span> (String) token.getPrincipal();</span><br><span class="line">    <span class="keyword">if</span> (jwt == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>(<span class="string">&quot;jwtToken 不允许为空&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 判断</span></span><br><span class="line">    <span class="keyword">if</span> (!jwtUtil.isVerify(jwt)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UnknownAccountException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 可以获取username信息，并做一些处理</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> (String) jwtUtil.decode(jwt).get(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">    logger.info(<span class="string">&quot;鉴权用户 username：&#123;&#125;&quot;</span>, username);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SimpleAuthenticationInfo</span>(jwt, jwt, <span class="string">&quot;JwtRealm&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在 doGetAuthenticationInfo 方法中，使用 jwtUtil.isVerify(jwt) 方法做验证处理。</li>
+</ul>
+<h2 id="3-JwtFilter-过滤器"><a href="#3-JwtFilter-过滤器" class="headerlink" title="3. JwtFilter 过滤器"></a>3. JwtFilter 过滤器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JwtFilter</span> <span class="keyword">extends</span> <span class="title class_">AccessControlFilter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(JwtFilter.class);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * isAccessAllowed 判断是否携带有效的 JwtToken</span></span><br><span class="line"><span class="comment">     * 所以这里直接返回一个 false，让它走 onAccessDenied 方法流程</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">isAccessAllowed</span><span class="params">(ServletRequest request, ServletResponse response, Object mappedValue)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回结果为true表明登录通过</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">boolean</span> <span class="title function_">onAccessDenied</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">HttpServletRequest</span> <span class="variable">request</span> <span class="operator">=</span> (HttpServletRequest) servletRequest;</span><br><span class="line">        <span class="comment">// 如果你设定的 token 放到 header 中，则可以这样获取；request.getHeader(&quot;Authorization&quot;);</span></span><br><span class="line">        <span class="type">JwtToken</span> <span class="variable">jwtToken</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JwtToken</span>(request.getParameter(<span class="string">&quot;token&quot;</span>));</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 鉴权认证</span></span><br><span class="line">            getSubject(servletRequest, servletResponse).login(jwtToken);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            logger.error(<span class="string">&quot;鉴权认证失败&quot;</span>, e);</span><br><span class="line">            onLoginFail(servletResponse);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 鉴权认证失败时默认返回 401 状态码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">onLoginFail</span><span class="params">(ServletResponse response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">HttpServletResponse</span> <span class="variable">httpResponse</span> <span class="operator">=</span> (HttpServletResponse) response;</span><br><span class="line">        httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span><br><span class="line">        httpResponse.getWriter().write(<span class="string">&quot;Auth Err!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这是一个自定义的 Filter 在 onAccessDenied 获取 request 请求的 token 入参信息，之后调用 getSubject 进行验证处理。</li>
+</ul>
+<h3 id="4-ShiroConfig-启动配置"><a href="#4-ShiroConfig-启动配置" class="headerlink" title="4. ShiroConfig 启动配置"></a>4. ShiroConfig 启动配置</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> ShiroFilterFactoryBean <span class="title function_">shiroFilterFactoryBean</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">ShiroFilterFactoryBean</span> <span class="variable">shiroFilter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ShiroFilterFactoryBean</span>();</span><br><span class="line">    shiroFilter.setSecurityManager(securityManager());</span><br><span class="line">    shiroFilter.setLoginUrl(<span class="string">&quot;/unauthenticated&quot;</span>);</span><br><span class="line">    shiroFilter.setUnauthorizedUrl(<span class="string">&quot;/unauthorized&quot;</span>);</span><br><span class="line">    <span class="comment">// 添加jwt过滤器</span></span><br><span class="line">    Map&lt;String, Filter&gt; filterMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    <span class="comment">// 设置过滤器【anon\logout可以不设置】</span></span><br><span class="line">    filterMap.put(<span class="string">&quot;anon&quot;</span>, <span class="keyword">new</span> <span class="title class_">AnonymousFilter</span>());</span><br><span class="line">    filterMap.put(<span class="string">&quot;jwt&quot;</span>, <span class="keyword">new</span> <span class="title class_">JwtFilter</span>());</span><br><span class="line">    filterMap.put(<span class="string">&quot;logout&quot;</span>, <span class="keyword">new</span> <span class="title class_">LogoutFilter</span>());</span><br><span class="line">    shiroFilter.setFilters(filterMap);</span><br><span class="line">    <span class="comment">// 拦截器，指定方法走哪个拦截器 【login-&gt;anon】【logout-&gt;logout】【verify-&gt;jwt】</span></span><br><span class="line">    Map&lt;String, String&gt; filterRuleMap = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line">    filterRuleMap.put(<span class="string">&quot;/login&quot;</span>, <span class="string">&quot;anon&quot;</span>);</span><br><span class="line">    filterRuleMap.put(<span class="string">&quot;/logout&quot;</span>, <span class="string">&quot;logout&quot;</span>);</span><br><span class="line">    filterRuleMap.put(<span class="string">&quot;/verify&quot;</span>, <span class="string">&quot;jwt&quot;</span>);</span><br><span class="line">    shiroFilter.setFilterChainDefinitionMap(filterRuleMap);</span><br><span class="line">    <span class="keyword">return</span> shiroFilter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这部分是一个设置过滤器和拦截处理，把 jwt 的过滤器设置上，之后拦截指定的 &#x2F;verify 方法。如果是 &#x2F;** 就是拦截所有除了 login、logout 配置的其他方法了。通常也是 Web 请求的一些配置操作。</li>
+</ul>
+<h3 id="5-ApiAccessController"><a href="#5-ApiAccessController" class="headerlink" title="5. ApiAccessController"></a>5. ApiAccessController</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ApiAccessController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(ApiAccessController.class);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * http://localhost:8080/authorize?username=xfg&amp;password=123</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/authorize&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;Map&lt;String, String&gt;&gt; <span class="title function_">authorize</span><span class="params">(String username, String password)</span> &#123;</span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        <span class="comment">// 模拟账号和密码校验</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">&quot;xfg&quot;</span>.equals(username) || !<span class="string">&quot;123&quot;</span>.equals(password)) &#123;</span><br><span class="line">            map.put(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;用户名密码错误&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> ResponseEntity.ok(map);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 校验通过生成token</span></span><br><span class="line">        <span class="type">JwtUtil</span> <span class="variable">jwtUtil</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JwtUtil</span>();</span><br><span class="line">        Map&lt;String, Object&gt; chaim = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        chaim.put(<span class="string">&quot;username&quot;</span>, username);</span><br><span class="line">        <span class="type">String</span> <span class="variable">jwtToken</span> <span class="operator">=</span> jwtUtil.encode(username, <span class="number">5</span> * <span class="number">60</span> * <span class="number">1000</span>, chaim);</span><br><span class="line">        map.put(<span class="string">&quot;msg&quot;</span>, <span class="string">&quot;授权成功&quot;</span>);</span><br><span class="line">        map.put(<span class="string">&quot;token&quot;</span>, jwtToken);</span><br><span class="line">        <span class="comment">// 返回token码</span></span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.ok(map);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * http://localhost:8080/verify?token=</span></span><br><span class="line"><span class="comment">     * token验证在Nginx实现反向代理的过程中已经完成了，此时直接返回成功的状态就可</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/verify&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;String&gt; <span class="title function_">verify</span><span class="params">(String token)</span> &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;验证 token：&#123;&#125;&quot;</span>, token);</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.status(HttpStatus.OK).body(<span class="string">&quot;verify success!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/success&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">success</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;test success by xfg&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这是本章节新增加的一个类，专门用于授权分配Token和验证处理的操作。不过这里的登录目前还没有走数据库，只是简单的验证处理。</li>
+</ul>
+<h1 id="4-功能验证"><a href="#4-功能验证" class="headerlink" title="4. 功能验证"></a>4. 功能验证</h1><ul>
+<li>授权Token：<strong><a target="_blank" rel="noopener" href="http://localhost:8080/authorize?username=xfg&password=123">http://localhost:8080/authorize?username=xfg&amp;password=123</a></strong> - 服务启动，访问地址，获取Token</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122040742.png" alt="image-20240312204019916"></p>
+<ul>
+<li>使用Token：<strong><a target="_blank" rel="noopener" href="http://localhost/api/?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4ZmciLCJleHAiOjE2ODMxMDQ4ODcsImlhdCI6MTY4MzEwNDU4NywianRpIjoiYzg5Y2YyZTQtODdiMy00ZjcyLWE0NTUtNTA4YTVkZjQxMTViIiwidXNlcm5hbWUiOiJ4ZmcifQ.Vy5QTZ8iDzOt-fGd_NKrT_IOBce8mBEx0gV0o0zHfaY">http://localhost/api/?token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4ZmciLCJleHAiOjE2ODMxMDQ4ODcsImlhdCI6MTY4MzEwNDU4NywianRpIjoiYzg5Y2YyZTQtODdiMy00ZjcyLWE0NTUtNTA4YTVkZjQxMTViIiwidXNlcm5hbWUiOiJ4ZmcifQ.Vy5QTZ8iDzOt-fGd_NKrT_IOBce8mBEx0gV0o0zHfaY</a></strong> - 把上图中的 Token 复制到这里就可以使用了。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122040234.png" alt="image-20240312204053642"></p>
+<h1 id="5-相关知识"><a href="#5-相关知识" class="headerlink" title="5. 相关知识"></a>5. 相关知识</h1><h2 id="1-shiro"><a href="#1-shiro" class="headerlink" title="1. shiro"></a>1. shiro</h2><p>shiro是一种易于使用的Java安全框架，shiro可以用来完成:认证、授权、加密、会话管理、与Web集成、缓存等。</p>
+<h3 id="1-基本功能"><a href="#1-基本功能" class="headerlink" title="1.基本功能"></a>1.基本功能</h3><p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122105155.png" alt="image-20240312210131954"></p>
+<ul>
+<li><p>Authentication：身份认证&#x2F;登录，验证用户是不是拥有相应的身份；</p>
+</li>
+<li><p>Authorization：授权，验证已认证的用户是否拥有某个权限，能否进行相关的操作；</p>
+</li>
+<li><p>Seesion Manager：会话管理，用户登录之后就是一次会话，没有退出之前，它的所有信息都保存在会话中；会话可以是普通的JavaSE环境，也可以是WEB环境；</p>
+</li>
+<li><p>Cryptography：加密，保护数据的安全性，如密码加密存储到数据库</p>
+</li>
+<li><p>Web Support：Web支持，可以非常容易的集成到Web环境</p>
+</li>
+<li><p>Caching ： 缓存，可以缓存用户登录后的信息、角色以及权限</p>
+</li>
+<li><p>Concurrency：Shiro支持多线程应用的并发验证</p>
+</li>
+<li><p>Testing：提供测试支持</p>
+</li>
+<li><p>Run As：允许用户假装为另外的用户的身份进行访问</p>
+</li>
+<li><p>Remember Me：记住我，下次登录就不需要进行验证\</p>
+</li>
+</ul>
+<h3 id="2-Shiro架构"><a href="#2-Shiro架构" class="headerlink" title="2. Shiro架构"></a>2. Shiro架构</h3><p>从外部来看，Shiro最主要的组件是Subject、SecurityManager以及Realm</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122107879.png" alt="image-20240312210755357"></p>
+<ul>
+<li><p>Subject:Shiro对外的接口，使用Shiro，就得拥有Subject对象，我们对Shiro的操作都是从Subject对象开始，subject对象可以理解为操作Shiro的媒介；</p>
+</li>
+<li><p>SecurityManager：安全管理器，与安全相关的交互都会与SecurityManager交互，它同时也管理着所有的Subject，相当于Spring MVC中的DispatchServlet的角色</p>
+</li>
+<li><p>Realm：Shiro从Realm获取安全数据，SecurityManager要想验证用户的身份信息，就需要从Realm中获取用户的信息，或者用户所拥有的权限&#x2F;角色,SecurityManager才能判断该用户是否能够进行下一步的操作。</p>
+</li>
+</ul>
+<h3 id="3-登录认证的概念"><a href="#3-登录认证的概念" class="headerlink" title="3. 登录认证的概念"></a>3. 登录认证的概念</h3><ul>
+<li><p>身份验证：验证你是否是我的用户、一般通过用户名&#x2F;密码来证明身份。</p>
+</li>
+<li><p>在shiro中，用户需要提供principals（身份）和credentials（证明）给shiro，使应用能够验证用户身份：</p>
+<p>principals：身份，能够唯一标识主体的属性，比如手机号、邮箱、用户名等<br>credentials：证明&#x2F;凭证，只有主体知道，比如密码<br>最常见的principals和credentials组合就是用户名&#x2F;密码。</p>
+</li>
+</ul>
+<h3 id="4-登录认证的基本流程"><a href="#4-登录认证的基本流程" class="headerlink" title="4. 登录认证的基本流程"></a>4. 登录认证的基本流程</h3><p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403122114580.png" alt="image-20240312211404317"></p>
+<p>身份认证的基本流程：</p>
+<ul>
+<li>首先调用 Subject.login(token) 进行登录，其会自动委托给 SecurityManager；</li>
+<li>SecurityManager 负责真正的身份验证逻辑；它会委托给 Authenticator 进行身份验证；</li>
+<li>Authenticator 才是真正的身份验证者，Shiro API 中核心的身份认证入口点，此处可以自定义插入自己的实现；</li>
+<li>Authenticator 可能会委托给相应的 AuthenticationStrategy 进行多 Realm 身份验证，默认 ModularRealmAuthenticator 会调用 AuthenticationStrategy 进行多 Realm身份验证；</li>
+<li>Authenticator 会把相应的 token 传入 Realm，从 Realm 获取身份验证信息，如果没有返回&#x2F;抛出异常表示身份验证失败了。此处 可以配置多个Realm，将按照相应的顺序及策略进行访问。</li>
+</ul>
+<h2 id="2-JWT"><a href="#2-JWT" class="headerlink" title="2. JWT"></a>2. JWT</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://lhb0902.github.io/lhb0902">Badkruka</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://lhb0902.github.io/lhb0902/2024/03/12/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-Shiro%E7%99%BB%E9%99%86%E6%8E%88%E6%9D%83%E5%8F%91%E6%94%BE%E8%AE%BF%E9%97%AEtoken/">https://lhb0902.github.io/lhb0902/2024/03/12/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-Shiro%E7%99%BB%E9%99%86%E6%8E%88%E6%9D%83%E5%8F%91%E6%94%BE%E8%AE%BF%E9%97%AEtoken/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/lhb0902/tags/Shiro/">Shiro</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403101116107.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/lhb0902/2024/03/13/LeetCode-Hot100-5-%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/" title="LeetCode-Hot100-5-最长回文子串"><img class="cover" src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202310092045338.png" onerror="onerror=null;src='/lhb0902/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">LeetCode-Hot100-5-最长回文子串</div></div></a></div><div class="next-post pull-right"><a href="/lhb0902/2024/03/12/LeetCode-Hot100-394-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BC%96%E7%A0%81/" title="LeetCode-Hot100-394-字符串编码"><img class="cover" src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202310092045338.png" onerror="onerror=null;src='/lhb0902/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">LeetCode-Hot100-394-字符串编码</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/lhb0902/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Badkruka</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/lhb0902/archives/"><div class="headline">Articles</div><div class="length-num">113</div></a><a href="/lhb0902/tags/"><div class="headline">Tags</div><div class="length-num">55</div></a><a href="/lhb0902/categories/"><div class="headline">Categories</div><div class="length-num">14</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lhb0902" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="QQ-Email:2507962100@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%8A%9F%E8%83%BD%E8%AF%89%E6%B1%82"><span class="toc-number">1.</span> <span class="toc-text">1. 功能诉求</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E6%B5%81%E7%A8%8B%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">2. 流程设计</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%96%B9%E6%A1%88%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">3. 方案实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">1. 工程结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-JwtRealm-%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">2. JwtRealm 验证配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-JwtFilter-%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">3.3.</span> <span class="toc-text">3. JwtFilter 过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-ShiroConfig-%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">3.3.1.</span> <span class="toc-text">4. ShiroConfig 启动配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-ApiAccessController"><span class="toc-number">3.3.2.</span> <span class="toc-text">5. ApiAccessController</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E5%8A%9F%E8%83%BD%E9%AA%8C%E8%AF%81"><span class="toc-number">4.</span> <span class="toc-text">4. 功能验证</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86"><span class="toc-number">5.</span> <span class="toc-text">5. 相关知识</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-shiro"><span class="toc-number">5.1.</span> <span class="toc-text">1. shiro</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E5%8A%9F%E8%83%BD"><span class="toc-number">5.1.1.</span> <span class="toc-text">1.基本功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Shiro%E6%9E%B6%E6%9E%84"><span class="toc-number">5.1.2.</span> <span class="toc-text">2. Shiro架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="toc-number">5.1.3.</span> <span class="toc-text">3. 登录认证的概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%99%BB%E5%BD%95%E8%AE%A4%E8%AF%81%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">5.1.4.</span> <span class="toc-text">4. 登录认证的基本流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-JWT"><span class="toc-number">5.2.</span> <span class="toc-text">2. JWT</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/13/LeetCode-Hot100-5-%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/" title="LeetCode-Hot100-5-最长回文子串"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202310092045338.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="LeetCode-Hot100-5-最长回文子串"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/13/LeetCode-Hot100-5-%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/" title="LeetCode-Hot100-5-最长回文子串">LeetCode-Hot100-5-最长回文子串</a><time datetime="2024-03-13T03:09:09.000Z" title="Created 2024-03-13 11:09:09">2024-03-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/12/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-Shiro%E7%99%BB%E9%99%86%E6%8E%88%E6%9D%83%E5%8F%91%E6%94%BE%E8%AE%BF%E9%97%AEtoken/" title="ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403101116107.jpeg" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/12/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-Shiro%E7%99%BB%E9%99%86%E6%8E%88%E6%9D%83%E5%8F%91%E6%94%BE%E8%AE%BF%E9%97%AEtoken/" title="ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token">ChatGPT微服务应用体系构建-Shiro登陆授权发放访问token</a><time datetime="2024-03-12T12:17:36.000Z" title="Created 2024-03-12 20:17:36">2024-03-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/12/LeetCode-Hot100-394-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BC%96%E7%A0%81/" title="LeetCode-Hot100-394-字符串编码"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202310092045338.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="LeetCode-Hot100-394-字符串编码"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/12/LeetCode-Hot100-394-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BC%96%E7%A0%81/" title="LeetCode-Hot100-394-字符串编码">LeetCode-Hot100-394-字符串编码</a><time datetime="2024-03-12T02:53:07.000Z" title="Created 2024-03-12 10:53:07">2024-03-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/11/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-chatgptAPI-API%E5%B7%A5%E7%A8%8B%E6%90%AD%E5%BB%BA%E5%92%8C%E7%AE%80%E5%8D%95%E8%AE%BF%E9%97%AE%E8%AE%A4%E8%AF%81/" title="ChatGPT微服务应用体系构建-chatgptAPI-API工程搭建和简单访问认证"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403101116107.jpeg" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="ChatGPT微服务应用体系构建-chatgptAPI-API工程搭建和简单访问认证"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/11/ChatGPT%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%BA%94%E7%94%A8%E4%BD%93%E7%B3%BB%E6%9E%84%E5%BB%BA-chatgptAPI-API%E5%B7%A5%E7%A8%8B%E6%90%AD%E5%BB%BA%E5%92%8C%E7%AE%80%E5%8D%95%E8%AE%BF%E9%97%AE%E8%AE%A4%E8%AF%81/" title="ChatGPT微服务应用体系构建-chatgptAPI-API工程搭建和简单访问认证">ChatGPT微服务应用体系构建-chatgptAPI-API工程搭建和简单访问认证</a><time datetime="2024-03-11T11:48:22.000Z" title="Created 2024-03-11 19:48:22">2024-03-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/11/LeetCode-Hot100-105-%E4%BB%8E%E5%89%8D%E5%BA%8F%E4%B8%8E%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/" title="LeetCode-Hot100-105-从前序与中序遍历序列构造二叉树"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202310092045338.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="LeetCode-Hot100-105-从前序与中序遍历序列构造二叉树"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/11/LeetCode-Hot100-105-%E4%BB%8E%E5%89%8D%E5%BA%8F%E4%B8%8E%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E6%9E%84%E9%80%A0%E4%BA%8C%E5%8F%89%E6%A0%91/" title="LeetCode-Hot100-105-从前序与中序遍历序列构造二叉树">LeetCode-Hot100-105-从前序与中序遍历序列构造二叉树</a><time datetime="2024-03-11T02:49:09.000Z" title="Created 2024-03-11 10:49:09">2024-03-11</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Badkruka</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/lhb0902/js/utils.js"></script><script src="/lhb0902/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="trueS"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
