@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>OKHttp使用及其原理 | Badkruka's blogs</title><meta name="author" content="Badkruka"><meta name="copyright" content="Badkruka"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 什么是OKHttpOKHttp 是由Square公司开源的网络请求框架。Google在Android4.4以后开始将源码中的HttpURLConnection底层实现替换为OKHttp。 2. OKHttp框架的优点 支持Http1、Http2、WebSocket   http1.0：每次请求都建立短连接，连接不可复用。 http1.1：引入了长连接，但是连接里的请求是排队等待的，其中一个请">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OKHttp使用及其原理">
+<meta property="og:url" content="https://lhb0902.github.io/lhb0902/2024/03/29/OKHttp%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Badkruka&#39;s blogs">
+<meta property="og:description" content="1. 什么是OKHttpOKHttp 是由Square公司开源的网络请求框架。Google在Android4.4以后开始将源码中的HttpURLConnection底层实现替换为OKHttp。 2. OKHttp框架的优点 支持Http1、Http2、WebSocket   http1.0：每次请求都建立短连接，连接不可复用。 http1.1：引入了长连接，但是连接里的请求是排队等待的，其中一个请">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292218666.png">
+<meta property="article:published_time" content="2024-03-29T14:16:29.000Z">
+<meta property="article:modified_time" content="2024-03-29T14:56:02.692Z">
+<meta property="article:author" content="Badkruka">
+<meta property="article:tag" content="OKHttp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292218666.png"><link rel="shortcut icon" href="/lhb0902/img/favicon.png"><link rel="canonical" href="https://lhb0902.github.io/lhb0902/2024/03/29/OKHttp%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%8E%9F%E7%90%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><link rel="stylesheet" href="/lhb0902/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/lhb0902/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: 'days',
+  dateSuffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'OKHttp使用及其原理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-29 22:56:02'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/lhb0902/archives/"><div class="headline">Articles</div><div class="length-num">173</div></a><a href="/lhb0902/tags/"><div class="headline">Tags</div><div class="length-num">66</div></a><a href="/lhb0902/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/lhb0902/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292218666.png')"><nav id="nav"><span id="blog-info"><a href="/lhb0902/" title="Badkruka's blogs"><span class="site-name">Badkruka's blogs</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/lhb0902/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/lhb0902/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">OKHttp使用及其原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-03-29T14:16:29.000Z" title="Created 2024-03-29 22:16:29">2024-03-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-03-29T14:56:02.692Z" title="Updated 2024-03-29 22:56:02">2024-03-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/lhb0902/categories/OKHttp/">OKHttp</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="OKHttp使用及其原理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-什么是OKHttp"><a href="#1-什么是OKHttp" class="headerlink" title="1. 什么是OKHttp"></a>1. 什么是OKHttp</h1><p><strong>OKHttp</strong> 是由Square公司开源的<strong>网络请求框架</strong>。Google在Android4.4以后开始将源码中的HttpURLConnection底层实现替换为OKHttp。</p>
+<h1 id="2-OKHttp框架的优点"><a href="#2-OKHttp框架的优点" class="headerlink" title="2. OKHttp框架的优点"></a>2. OKHttp框架的优点</h1><ol>
+<li>支持Http1、Http2、WebSocket</li>
+</ol>
+<blockquote>
+<p>http1.0：每次请求都建立短连接，连接不可复用。</p>
+<p>http1.1：引入了长连接，但是连接里的请求是排队等待的，其中一个请求超时，后续等待的请求就被阻塞。传输数据格式是文本。</p>
+<p>http2.0: 多路复用。多个请求不是像1.1那样排队等待而是并行的，根据请求id来区分不同的请求；而且http2.0使用二进制格式进行传输；http2.0支持头部压缩；支持服务端主动push消息。</p>
+</blockquote>
+<ol>
+<li>具有重试和重定向机制</li>
+<li>支持GZIP压缩数据，减少数据流量</li>
+<li>可以缓存响应的数据，减少短时间内重复的网络请求</li>
+<li>底层TCP socket 连接复用，可以减少请求延时</li>
+</ol>
+<h1 id="3-如何使用OKHttp"><a href="#3-如何使用OKHttp" class="headerlink" title="3. 如何使用OKHttp"></a>3. 如何使用OKHttp</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//同步Get 请求</span></span><br><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;http://wwww.baidu.com&quot;</span>;</span><br><span class="line"><span class="type">OkHttpClient</span> <span class="variable">okHttpClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>();</span><br><span class="line"><span class="keyword">final</span> <span class="type">Request</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Request</span>.Builder()</span><br><span class="line">        .url(url)</span><br><span class="line">        .build();</span><br><span class="line"><span class="keyword">final</span> <span class="type">Call</span> <span class="variable">call</span> <span class="operator">=</span> okHttpClient.newCall(request);</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Response</span> <span class="variable">response</span> <span class="operator">=</span> call.execute();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//异步Get请求</span></span><br><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;http://wwww.baidu.com&quot;</span>;</span><br><span class="line"><span class="type">OkHttpClient</span> <span class="variable">okHttpClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OkHttpClient</span>();</span><br><span class="line"><span class="keyword">final</span> <span class="type">Request</span> <span class="variable">request</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Request</span>.Builder()</span><br><span class="line">        .url(url)</span><br><span class="line">        .get()</span><br><span class="line">        .build();</span><br><span class="line"><span class="type">Call</span> <span class="variable">call</span> <span class="operator">=</span> okHttpClient.newCall(request);</span><br><span class="line">call.enqueue(<span class="keyword">new</span> <span class="title class_">Callback</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onFailure</span><span class="params">(Call call, IOException e)</span> &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;okhttp onFailure: &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onResponse</span><span class="params">(Call call, Response response)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;okhttp onResponse: &quot;</span> + response.body().string());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>使用OKHttp发起请求时，使用到三个关键的类OKHttpClient、Call、Request。</p>
+<p>这里涉及到的设计模式：Request的创建是 Builder建造者设计模式、OKHttpClient的使用是门面设计模式。</p>
+<p>调用Call的同步接口execute或者异步接口enqueue后，统一交给分发器Dispatcher进行处理。</p>
+<p>分发器把请求交给了拦截器链（责任链设计模式），整个流程如下图。</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292226211.png" alt="image-20240329222650984"></p>
+<p>在拦截器链中，传递的是Chain，可以通过Chain获取到Request，返回的是Response，一个U字型的请求响应链。</p>
+<h1 id="4-什么是分发器Dispatcher"><a href="#4-什么是分发器Dispatcher" class="headerlink" title="4. 什么是分发器Dispatcher"></a>4. 什么是分发器Dispatcher</h1><p> 分发器作用是调配请求任务，内部有一个线程池、维护了三个队列：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//异步请求使用的线程池</span></span><br><span class="line"><span class="keyword">private</span> ExecutorService executorService;</span><br><span class="line"><span class="comment">//异步请求准备队列</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Deque&lt;AsyncCall&gt; readyAsyncCalls = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>();</span><br><span class="line"><span class="comment">//异步请求正在执行队列</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Deque&lt;AsyncCall&gt; runningAsyncCalls = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>();</span><br><span class="line"><span class="comment">//同步请求正在执行队列</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Deque&lt;RealCall&gt; runningSyncCalls = <span class="keyword">new</span> <span class="title class_">ArrayDeque</span>();</span><br></pre></td></tr></table></figure>
+
+<p>分发器内部工作原理流程图（以异步请求为例）：实际上就是一个生产——消费者模式， Dispatcher是生产者，线程池是消费者。</p>
+<p><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292228122.png" alt="image-20240329222855975"></p>
+<ol>
+<li><p><strong>判断Call是放入ready队列还是Running队列的依据</strong></p>
+<p>如果当前正在执行队列的请求数大于64，则放入ready队列；</p>
+<p>如果小于64，但是已经存在同一域名主机的请求5个，也还是放入 ready 队列；</p>
+</li>
+<li><p><strong>从ready队列 把请求Call移动到执行队列的条件</strong></p>
+<p>每个请求执行完成就会调用client.dispatcher().finished(call)把当前的call从running队列移除，然后调用Dispatcher.promoteCalls()，采用与1中相同的逻辑判断是否发生移动</p>
+</li>
+<li><p><strong>分发器中的线程池有什么特点</strong></p>
+<p>核心线程数0; 最大线程数：Interger.MAXVALUE；keepAliveTime : 60</p>
+<p>可以做到无等待、最大并发。</p>
+</li>
+<li><p><strong>线程池的原理</strong></p>
+<p>当把请求交给线程池时</p>
+<p>a. 线程数量小于核心线程数量，新建核心线程处理新来的请求任务。</p>
+<p>b. 线程数量大于等于核心线程数量，如果存在空闲线程，使用空闲线程处理新来的请求任务。</p>
+<p>c.线程数量大于等于核心线程数量，并且不存在空闲线程，新的请求任务会被添加到等待队列</p>
+<p>添加请求任务到等待队列成功：等待空闲线程。</p>
+<p>添加请求任务到等待队列失败：如果线程数量小于最大线程池数量，则新建线程执行新的请求任务；如果线程数量等于最大线程池数量，拒绝该任务。</p>
+</li>
+</ol>
+<p><strong>OKhttp的线程池采用的是SyncChronousQueue队列——没有容量的等待队列,添加任务的时候会添加失败，因此会走到上述的步骤c 添加失败，又因为最大线程数是Interger.MAXVALUE，所以就会新建线程处理新的请求任务，这样就能做到无等待，最大并发。</strong></p>
+<blockquote>
+<p><code>SynchronousQueue</code> 是 Java 并发包中的一个类，用于实现线程间的数据传输。它是一个特殊的阻塞队列，其中每个插入操作必须等待另一个线程进行相应的删除操作，反之亦然。换句话说，SynchronousQueue 在没有消费者线程等待的情况下不会存储任何元素；一个线程尝试将元素放入队列时，必须等待另一个线程试图从队列中获取这个元素。</p>
+</blockquote>
+<h1 id="5-每一个拦截器的作用"><a href="#5-每一个拦截器的作用" class="headerlink" title="5. 每一个拦截器的作用"></a>5. 每一个拦截器的作用</h1><ol>
+<li><strong>重试重定向拦截器：</strong>请求超时可以重试；请求返回根据返回码如果是30X，可以进行重定向</li>
+<li><strong>桥接拦截器：</strong>对Request添加一些请求头，进行GZip压缩和解压缩</li>
+<li><strong>缓存拦截器：</strong>判断当前请求是否存在缓存以及是否可用利用缓存</li>
+<li><strong>连接拦截器：</strong>复用或者新建一个socket连接</li>
+<li><strong>请求服务拦截器：</strong>真正与服务器进行通信，向服务端发送数据和解析服务端的响应数据</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="https://lhb0902.github.io/lhb0902">Badkruka</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://lhb0902.github.io/lhb0902/2024/03/29/OKHttp%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%8E%9F%E7%90%86/">https://lhb0902.github.io/lhb0902/2024/03/29/OKHttp%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%8E%9F%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/lhb0902/tags/OKHttp/">OKHttp</a></div><div class="post_share"><div class="social-share" data-image="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292218666.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/lhb0902/2024/03/30/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-138-%E9%9A%8F%E6%9C%BA%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6/" title="面试经典150题-138-随机链表的复制"><img class="cover" src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403141039827.png" onerror="onerror=null;src='/lhb0902/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">面试经典150题-138-随机链表的复制</div></div></a></div><div class="next-post pull-right"><a href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-226-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91/" title="面试经典150题-226-翻转二叉树"><img class="cover" src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403141039827.png" onerror="onerror=null;src='/lhb0902/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">面试经典150题-226-翻转二叉树</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/lhb0902/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Badkruka</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/lhb0902/archives/"><div class="headline">Articles</div><div class="length-num">173</div></a><a href="/lhb0902/tags/"><div class="headline">Tags</div><div class="length-num">66</div></a><a href="/lhb0902/categories/"><div class="headline">Categories</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/lhb0902" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="QQ-Email:2507962100@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AFOKHttp"><span class="toc-number">1.</span> <span class="toc-text">1. 什么是OKHttp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-OKHttp%E6%A1%86%E6%9E%B6%E7%9A%84%E4%BC%98%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">2. OKHttp框架的优点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8OKHttp"><span class="toc-number">3.</span> <span class="toc-text">3. 如何使用OKHttp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E5%8F%91%E5%99%A8Dispatcher"><span class="toc-number">4.</span> <span class="toc-text">4. 什么是分发器Dispatcher</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E6%AF%8F%E4%B8%80%E4%B8%AA%E6%8B%A6%E6%88%AA%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">5. 每一个拦截器的作用</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/30/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-138-%E9%9A%8F%E6%9C%BA%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6/" title="面试经典150题-138-随机链表的复制"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403141039827.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="面试经典150题-138-随机链表的复制"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/30/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-138-%E9%9A%8F%E6%9C%BA%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6/" title="面试经典150题-138-随机链表的复制">面试经典150题-138-随机链表的复制</a><time datetime="2024-03-30T03:26:27.000Z" title="Created 2024-03-30 11:26:27">2024-03-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/29/OKHttp%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%8E%9F%E7%90%86/" title="OKHttp使用及其原理"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403292218666.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="OKHttp使用及其原理"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/29/OKHttp%E4%BD%BF%E7%94%A8%E5%8F%8A%E5%8E%9F%E7%90%86/" title="OKHttp使用及其原理">OKHttp使用及其原理</a><time datetime="2024-03-29T14:16:29.000Z" title="Created 2024-03-29 22:16:29">2024-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-226-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91/" title="面试经典150题-226-翻转二叉树"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403141039827.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="面试经典150题-226-翻转二叉树"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-226-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91/" title="面试经典150题-226-翻转二叉树">面试经典150题-226-翻转二叉树</a><time datetime="2024-03-29T13:24:23.000Z" title="Created 2024-03-29 21:24:23">2024-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-73-%E7%9F%A9%E9%98%B5%E7%BD%AE%E9%9B%B6/" title="面试经典150题-73-矩阵置零"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403141039827.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="面试经典150题-73-矩阵置零"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-73-%E7%9F%A9%E9%98%B5%E7%BD%AE%E9%9B%B6/" title="面试经典150题-73-矩阵置零">面试经典150题-73-矩阵置零</a><time datetime="2024-03-29T08:36:09.000Z" title="Created 2024-03-29 16:36:09">2024-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-36-%E6%9C%89%E6%95%88%E7%9A%84%E6%95%B0%E7%8B%AC/" title="面试经典150题-36-有效的数独"><img src="https://raw.githubusercontent.com/lhb0902/pictures-bad/main/202403141039827.png" onerror="this.onerror=null;this.src='/lhb0902/img/404.jpg'" alt="面试经典150题-36-有效的数独"/></a><div class="content"><a class="title" href="/lhb0902/2024/03/29/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%85%B8150%E9%A2%98-36-%E6%9C%89%E6%95%88%E7%9A%84%E6%95%B0%E7%8B%AC/" title="面试经典150题-36-有效的数独">面试经典150题-36-有效的数独</a><time datetime="2024-03-29T07:48:56.000Z" title="Created 2024-03-29 15:48:56">2024-03-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Badkruka</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/lhb0902/js/utils.js"></script><script src="/lhb0902/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="trueS"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
